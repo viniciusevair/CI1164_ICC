@@ -29,6 +29,35 @@ struct tMatrix* createMatrix(int size) {
     return m;
 }
 
+struct tTridMatrix* createTridMatrix(int size) {
+    struct tTridMatrix* m;
+
+    if(! (m = malloc(sizeof(struct tTridMatrix)))) {
+        fprintf(stderr, "Erro ao alocar memória");
+        return NULL;
+    }
+
+    m->size = size;
+    if(! (m->d = calloc(m->size, sizeof(double)))) {
+        fprintf(stderr, "Erro ao alocar memória");
+        return NULL;
+    }
+    if(! (m->a = calloc(m->size - 1, sizeof(double)))) {
+        fprintf(stderr, "Erro ao alocar memória");
+        return NULL;
+    }
+    if(! (m->c = calloc(m->size - 1, sizeof(double)))) {
+        fprintf(stderr, "Erro ao alocar memória");
+        return NULL;
+    }
+    if(! (m->b = calloc(m->size, sizeof(double)))) {
+        fprintf(stderr, "Erro ao alocar memória");
+        return NULL;
+    }
+
+    return m;
+}
+
 double* createArray(int size) {
     double* arr;
     if(! (arr = calloc(size, sizeof(double)))) {
@@ -37,6 +66,11 @@ double* createArray(int size) {
     }
 
     return arr;
+}
+
+void deleteArray(double *arr) {
+    free(arr);
+    arr = NULL;
 }
 
 void deleteMatrix(struct tMatrix* m) {
@@ -59,6 +93,19 @@ void readInput(struct tMatrix *matrix, double *b) {
         for(j = 0; j < matrix->size; j++)
             scanf("%lf", &matrix->data[i][j]);
         scanf("%lf", &b[i]);
+    }
+}
+
+void readInputTrid(struct tTridMatrix *matrixTrid) {
+    int i, j;
+    struct tMatrix *aux = createMatrix(matrixTrid->size);
+    readInput(aux, matrixTrid->b);
+    for (i = 0; i < matrixTrid->size; i++) {
+        matrixTrid->d[i] = aux->data[i][i];
+        if (i < matrixTrid->size - 1)
+            matrixTrid->c[i] = aux->data[i][i + 1];
+        if (i > 0)
+            matrixTrid->a[i - 1] = aux->data[i][i - 1];
     }
 }
 
@@ -183,6 +230,34 @@ int gaussSeidel(struct tMatrix *m, double *b, double *x, double tol) {
         memcpy(lastIteration, x, sizeof(double) * m->size);
         it++;
     }
-
+    deleteArray(lastIteration);
     return it;
 }
+
+int gaussSeidelTrid(double *d, double *a, double *c, double *b,
+                    double *x, unsigned int n, double tol) {
+    double err = 1 + tol;
+    double s;
+    double *lastIteration = createArray(n);
+    int i, j;
+    int it = 0;
+    while (err > tol && it < 50) {
+        x[0] = (b[0] - c[0] * x[1]) / d[0];
+        
+        for (i = 1; i < n - 1; i++)
+            x[i] = (b[i] - a[i-1] * x[i - 1] - c[i] * x[i + 1]) / d[i];
+        x[n - 1] = (b[n - 1] - a[n - 2] * x[n - 2]) / d[n - 1];
+        printArray(x, n);
+        //calcula erro entre x e lastIteration
+        if(it > 0)
+            err = getMaxDiff(x, lastIteration, n);
+        //troca x e lastIteration
+        printf("Erro: %lf\n", err);
+        memcpy(lastIteration, x, sizeof(double) * n);
+        it++;
+    }
+    printf("Iterações: %d\n", it);
+    deleteArray(lastIteration);
+    return it;
+}
+
