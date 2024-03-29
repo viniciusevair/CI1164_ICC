@@ -247,17 +247,13 @@ int gaussSeidelTrid(double *d, double *a, double *c, double *b,
         for (i = 1; i < n - 1; i++)
             x[i] = (b[i] - a[i-1] * x[i - 1] - c[i] * x[i + 1]) / d[i];
         x[n - 1] = (b[n - 1] - a[n - 2] * x[n - 2]) / d[n - 1];
-        printArray(x, n);
         //calcula erro entre x e lastIteration
         if(it > 0)
             err = getMaxDiff(x, lastIteration, n);
         //troca x e lastIteration
-        printf("Erro: %lf\n", err);
         memcpy(lastIteration, x, sizeof(double) * n);
         it++;
     }
-    printf("Iterações: %d\n", it);
     deleteArray(lastIteration);
     return it;
 }
-
