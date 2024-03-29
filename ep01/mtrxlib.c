@@ -81,20 +81,20 @@ void printArray(double *x, int size) {
     printf("x[%d] = %lf\n", size - 1, x[size - 1]);
 }
 
-void printSolution(struct tMatrix *m, struct tMatrix *originalMatrix) {
+void printSolution(struct tMatrix *m, double *b, struct tMatrix *originalMatrix, double *c) {
     int i, j;
     double solution[m->size];
     double residual[m->size];
 
     for(i = m->size - 1; i >= 0; i--) {
-        solution[i] = m->data[i][m->size];
+        solution[i] = b[i];
         for(j = i + 1; j < m->size; j++)
             solution[i] -= m->data[i][j] * solution[j];
         solution[i] /= m->data[i][i];
     }
     for(i = 0; i < m->size; i++) {
-        residual[i] = (-1) * originalMatrix->data[i][m->size];
-        for(j = 0; j < originalMatrix->size; j++)
+        residual[i] = (-1) * c[i];
+        for(j = 0; j < m->size; j++)
             residual[i] += originalMatrix->data[i][j] * solution[j];
     }
 

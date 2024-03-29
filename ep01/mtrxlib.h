@@ -18,7 +18,7 @@ void printMatrix(struct tMatrix* m, double *b);
 
 void printArray(double *x, int size);
 
-void printSolution(struct tMatrix *m, struct tMatrix *originalMatrix);
+void printSolution(struct tMatrix *m, double *b, struct tMatrix *originalMatrix, double *c);
 
 void gaussianElim(struct tMatrix* m, double *b);
 
