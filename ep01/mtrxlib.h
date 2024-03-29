@@ -1,27 +1,31 @@
 #ifndef __MATRIX_H
 #define __MATRIX_H
 
-struct t_matrix {
+struct tMatrix {
     double **data;
     int size;
 };
 
-struct t_matrix* create_matrix(int size);
+struct tMatrix* createMatrix(int size);
 
-void delete_matrix(struct t_matrix* m);
+double* createArray(int size);
 
-void read_input(struct t_matrix* m);
+void deleteMatrix(struct tMatrix* m);
 
-void print_matrix(struct t_matrix* m);
+void readInput(struct tMatrix *matrix, double *b);
 
-void print_solution(struct t_matrix *m, struct t_matrix *original_matrix);
+void printMatrix(struct tMatrix* m, double *b);
 
-void gaussian_elim(struct t_matrix* m);
+void printArray(double *x, int size);
 
-void gauss_seidel(struct t_matrix* m);
+void printSolution(struct tMatrix *m, struct tMatrix *originalMatrix);
 
-void gaussian_elim_trid(struct t_matrix* m);
+void gaussianElim(struct tMatrix* m, double *b);
 
-void gauss_seidel_trid(struct t_matrix* m);
+int gaussSeidel(struct tMatrix *m, double *b, double *x, double tol);
+
+void gaussianElimTrid(struct tMatrix* m);
+
+void gaussSeidelTrid(struct tMatrix* m);
 
 #endif

@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 #include "mtrxlib.h"
 
-struct t_matrix* create_matrix(int size) {
+struct tMatrix* createMatrix(int size) {
     int i;
-    struct t_matrix* m;
+    struct tMatrix* m;
 
-    if(! (m = malloc(sizeof(struct t_matrix)))) {
+    if(! (m = malloc(sizeof(struct tMatrix)))) {
         fprintf(stderr, "Erro ao alocar memória");
         return NULL;
     }
@@ -20,11 +21,7 @@ struct t_matrix* create_matrix(int size) {
     }
 
     for (i = 0; i < m->size; i++)
-        /*
-         * Alocado em cada linha uma coluna a mais para já guardar dentro da
-         * estrutura a solução do sistema.
-         */
-        if(! (m->data[i] = calloc(m->size + 1, sizeof(double)))) {
+        if(! (m->data[i] = calloc(m->size, sizeof(double)))) {
             fprintf(stderr, "Erro ao alocar memória");
             return NULL;
         }
@@ -32,7 +29,17 @@ struct t_matrix* create_matrix(int size) {
     return m;
 }
 
-void delete_matrix(struct t_matrix* m) {
+double* createArray(int size) {
+    double* arr;
+    if(! (arr = calloc(size, sizeof(double)))) {
+        fprintf(stderr, "Erro ao alocar memória");
+        return NULL;
+    }
+
+    return arr;
+}
+
+void deleteMatrix(struct tMatrix* m) {
     int i;
 
     for(i = 0; i < m->size; i++) {
@@ -45,50 +52,36 @@ void delete_matrix(struct t_matrix* m) {
     m = NULL;
 }
 
-void read_input(struct t_matrix* matrix) {
+void readInput(struct tMatrix *matrix, double *b) {
     int i, j;
 
-    for(i = 0; i < matrix->size; i++)
-        for(j = 0; j <= matrix->size; j++)
+    for(i = 0; i < matrix->size; i++) {
+        for(j = 0; j < matrix->size; j++)
             scanf("%lf", &matrix->data[i][j]);
-}
-
-/*
- * Função auxiliar para formatar a saída do sistema
- */
-void find_max_column_widths(struct t_matrix* m, int *widths) {
-    int i, j;
-
-    for (j = 0; j < m->size+1; j++) {
-        int max_width = 0;
-
-        for (i = 0; i < m->size; i++) {
-            int current_width = snprintf(NULL, 0, "%.5lf", m->data[i][j]);
-
-            if (max_width < current_width) {
-                max_width = current_width;
-            }
-        }
-        widths[j] = max_width;
+        scanf("%lf", &b[i]);
     }
 }
 
 /*
  * Função para debugging. Imprime o sistema linear na saída padrão.
  */
-void print_matrix(struct t_matrix* m) {
+void printMatrix(struct tMatrix* m, double *b) {
     int i, j;
-    int column_widths[m->size + 1];
-    find_max_column_widths(m, column_widths);
 
     for (i = 0; i < m->size; i++) {
         for (j = 0; j < m->size; j++)
-            printf("%*.5lf   ", column_widths[j], m->data[i][j]);
-        printf("%*.5lf\n", column_widths[j], m->data[i][j]);
+            printf("%lf   ", m->data[i][j]);
+        printf("%lf\n", b[i]);
     }
 }
 
-void print_solution(struct t_matrix *m, struct t_matrix *original_matrix) {
+void printArray(double *x, int size) {
+    for(int i = 0; i < size - 1; i++)
+        printf("x[%d] = %lf ", i, x[i]);
+    printf("x[%d] = %lf\n", size - 1, x[size - 1]);
+}
+
+void printSolution(struct tMatrix *m, struct tMatrix *originalMatrix) {
     int i, j;
     double solution[m->size];
     double residual[m->size];
@@ -100,9 +93,9 @@ void print_solution(struct t_matrix *m, struct t_matrix *original_matrix) {
         solution[i] /= m->data[i][i];
     }
     for(i = 0; i < m->size; i++) {
-        residual[i] = (-1) * original_matrix->data[i][m->size];
-        for(j = 0; j < original_matrix->size; j++)
-            residual[i] += original_matrix->data[i][j] * solution[j];
+        residual[i] = (-1) * originalMatrix->data[i][m->size];
+        for(j = 0; j < originalMatrix->size; j++)
+            residual[i] += originalMatrix->data[i][j] * solution[j];
     }
 
     printf("X = [");
@@ -115,13 +108,13 @@ void print_solution(struct t_matrix *m, struct t_matrix *original_matrix) {
     printf("%.8e]\n", residual[i]);
 }
 
-void swap_lines(struct t_matrix* m, int a, int b) {
-    double* aux_pointer = m->data[a];
+void swapLines(struct tMatrix* m, int a, int b) {
+    double* auxPointer = m->data[a];
     m->data[a] = m->data[b];
-    m->data[b] = aux_pointer;
+    m->data[b] = auxPointer;
 }
 
-int get_max_column_value(struct t_matrix* m, int column) {
+int getMaxColumnValue(struct tMatrix* m, int column) {
     int candidate = column;
 
     for(int j = column + 1; j < m->size; j++)
@@ -131,14 +124,14 @@ int get_max_column_value(struct t_matrix* m, int column) {
     return candidate;
 }
 
-void pivoting(struct t_matrix* m, int i) {
-    int pivot_candidate = get_max_column_value(m, i);
+void pivoting(struct tMatrix* m, int i) {
+    int pivotCandidate = getMaxColumnValue(m, i);
 
-    if(pivot_candidate != i)
-        swap_lines(m, i, pivot_candidate);
+    if(pivotCandidate != i)
+        swapLines(m, i, pivotCandidate);
 }
 
-void gaussian_elim(struct t_matrix* m) {
+void gaussianElim(struct tMatrix* m, double *b) {
     for(int i = 0; i < m->size; i++) {
         pivoting(m, i);
 
@@ -146,8 +139,50 @@ void gaussian_elim(struct t_matrix* m) {
             double multiplier = m->data[row][i] / m->data[i][i];
 
             m->data[row][i] = 0.0;
-            for(int col = i + 1; col <= m->size; col++)
+            for(int col = i + 1; col < m->size; col++)
                 m->data[row][col] -= m->data[i][col] * multiplier;
+            b[row] -= b[i] * multiplier;
         }
     }
+}
+
+double getMaxDiff(double *a, double *b, int size){
+    double currentErr;
+    double maxErr = 0.0;
+    for(int i = 0; i < size; i++) {
+        currentErr = fabs(fabs(a[i]) - fabs(b[i]));
+        if(currentErr > maxErr)
+            maxErr = currentErr;
+    }
+
+    return maxErr;
+}
+
+/* Tolerância é 10^-4, iteração máxima 50. */
+int gaussSeidel(struct tMatrix *m, double *b, double *x, double tol) {
+    double err = 1 + tol;
+    double s;
+    double *lastIteration = createArray(m->size);
+    int i, j;
+    int it = 0;
+
+    while (err > tol && it < 50) {
+        for(i = 0; i < m->size; i++) {
+            s = 0; 
+            for (j = 0; j < m->size; j++) {
+                if(i != j)
+                    s = s + m->data[i][j] * x[j];
+            }
+            x[i] = (b[i] - s) / m->data[i][i];
+        }
+
+        //calcula erro entre x e lastIteration
+        if(it > 0)
+            err = getMaxDiff(x, lastIteration, m->size);
+        //troca x e lastIteration
+        memcpy(lastIteration, x, sizeof(double) * m->size);
+        it++;
+    }
+
+    return it;
 }

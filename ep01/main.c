@@ -1,30 +1,30 @@
 #include <stdio.h>
-#include <string.h>
 #include "mtrxlib.h"
 
 int main(int argc, char *argv[]) {
-    int matrix_size;
-    struct t_matrix *m, *n;
-    scanf("%d", &matrix_size);
-    printf("The size will be %d\n", matrix_size);
+    int matrixSize;
+    struct tMatrix *m, *n;
+    double *b;
+    scanf("%d", &matrixSize);
+    printf("The size will be %d\n", matrixSize);
 
-    m = create_matrix(matrix_size);
-    n = create_matrix(matrix_size);
-    printf("Allocated space for all the matrix!\n");
-    printf("I'll now read the data.\n");
-    read_input(m);
-    for(int i = 0; i < matrix_size; i++)
-        memcpy(n->data[i], m->data[i], (matrix_size + 1)*sizeof(double));
+    m = createMatrix(matrixSize);
+    b = createArray(matrixSize);
+    readInput(m, b);
+    /*
+     * Fazer várias cópias da matriz e do vetor com a solução para usar cada um
+     * dos métodos especificados no exercício.
+     */
 
-    print_matrix(m);
-    printf("TESTTESTETSTSTETESTSETESTESTES:\n");
-    print_matrix(n);
-    printf("------------\n");
-    gaussian_elim(n);
-    print_matrix(n);
-    print_solution(n, m);
-
-    delete_matrix(m);
+    printMatrix(m, b);
+    double *x = createArray(matrixSize);
+    printf("TÁ ZERADO?\n");
+    printArray(x, matrixSize);
+    gaussSeidel(m, b, x, 10e-4);
+    printf("-----\n");
+    printMatrix(m, b);
+    printf("Solução???\n");
+    printArray(x, matrixSize);
 
     return 0;
 }

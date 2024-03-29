@@ -6,7 +6,7 @@
     CC     = gcc
 
 # Acrescentar onde apropriado as opções para incluir uso da biblioteca LIKWID
-    CFLAGS = -O0
+    CFLAGS = -O0 -g
     LFLAGS = -lm
 
 # Lista de arquivos para distribuição
