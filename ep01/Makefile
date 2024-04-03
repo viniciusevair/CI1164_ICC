@@ -1,13 +1,17 @@
 # PROGRAMA
-    PROG = perfSL
-    OBJS = main.o mtrxlib.o
+PROG = perfSL
+OBJS = main.o gaussSeidel.o elimGauss.o linSys.o
 
 # Compilador
-    CC     = gcc
+CC     = gcc
 
 # Acrescentar onde apropriado as opções para incluir uso da biblioteca LIKWID
-    CFLAGS = -O0 -g
-    LFLAGS = -lm
+CFLAGS = -O0 -g
+LFLAGS = -lm
+
+LIKWID = /home/soft/likwid/
+LIKWID_FLAGS = -I$(LIKWID)/include
+LIKWID_LIB = -L$(LIKWID)/lib
 
 # Lista de arquivos para distribuição
 DISTFILES = *.c *.h LEIAME* Makefile

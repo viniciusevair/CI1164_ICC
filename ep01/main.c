@@ -1,22 +1,32 @@
 #include <stdio.h>
-#include "mtrxlib.h"
+#include <string.h>
+#include "linSys.h"
+#include "elimGauss.h"
+#include "gaussSeidel.h"
+#include "utils.h"
 
 int main(int argc, char *argv[]) {
     int matrixSize;
-    struct tTridMatrix *m, *n;
-    double *b;
+    double *b, *c;
+    rtime_t tempo;
+    struct tMatrix *m, *n;
     scanf("%d", &matrixSize);
-    printf("The size will be %d\n", matrixSize);
+    m = createMatrix(matrixSize);
+    readInput(m);
+    n = makeCopy(m);
+    //memcpy(n, m, sizeof(struct tMatrix)*m->size*m->size);
+    //memcpy(c, b, sizeof(double)*m->size);
 
-    m = createTridMatrix(matrixSize);
-    readInputTrid(m);
-    /*
-     * Fazer várias cópias da matriz e do vetor com a solução para usar cada um
-     * dos métodos especificados no exercício.
-     */
-    double *x = createArray(matrixSize);
-    gaussSeidelTrid(m->d, m->a, m->c, m->b, x, matrixSize, 0.0001);
-    printArray(x, matrixSize);
+    printMatrix(m);
+    printf("-----------\n");
+    printMatrix(n);
+
+    //tempo = timestamp();
+    //gaussianElim(m, b);
+    //tempo = timestamp() - tempo;
+
+    //printf("EG clássico:\n");
+    //printSolution(m, b, struct tMatrix *originalMatrix, double *c)
 
     return 0;
 }
