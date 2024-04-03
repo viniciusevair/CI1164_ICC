@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <string.h>
 
 #include "linSys.h"
@@ -25,6 +24,8 @@ struct tMatrix* createMatrix(int size) {
             fprintf(stderr, "Erro ao alocar memória");
             return NULL;
         }
+
+    m->b = createArray(m->size);
 
     return m;
 }
@@ -92,14 +93,18 @@ void readInput(struct tMatrix *matrix) {
     for(i = 0; i < matrix->size; i++) {
         for(j = 0; j < matrix->size; j++)
             scanf("%lf", &matrix->data[i][j]);
-        scanf("%lf", &matrix->sol[i]);
+        scanf("%lf", &matrix->b[i]);
     }
 }
 
 struct tMatrix* makeCopy(struct tMatrix *m) {
     struct tMatrix *copy = createMatrix(m->size);
 
-    memcpy(copy, m, sizeof(struct tMatrix)*m->size*m->size);
+    for (int i = 0; i < m->size; i++) {
+        memcpy(copy->data[i], m->data[i], sizeof(double) * m->size);
+    }
+
+    memcpy(copy->b, m->b, sizeof(double) * m->size);
 
     return copy;
 }
@@ -128,7 +133,7 @@ void printMatrix(struct tMatrix* m) {
     for (i = 0; i < m->size; i++) {
         for (j = 0; j < m->size; j++)
             printf("%lf   ", m->data[i][j]);
-        printf("%lf\n", m->sol[i]);
+        printf("%lf\n", m->b[i]);
     }
 }
 

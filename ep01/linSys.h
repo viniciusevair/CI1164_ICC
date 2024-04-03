@@ -3,7 +3,7 @@
 
 struct tMatrix {
     double **data;
-    double *sol;
+    double *b;
     int size;
 };
 
