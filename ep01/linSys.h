@@ -35,7 +35,8 @@ void printMatrix(struct tMatrix* m);
 
 void printArray(double *x, int size);
 
-void printSolution(struct tMatrix *m, struct tMatrix *originalMatrix);
+void getSolution(struct tMatrix *m, double *x);
 
+void getResidual(double *x, double *r, struct tMatrix *originalMatrix);
 
 #endif

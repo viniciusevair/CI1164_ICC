@@ -1,6 +1,6 @@
 # PROGRAMA
 PROG = perfSL
-OBJS = main.o gaussSeidel.o elimGauss.o linSys.o
+OBJS = main.o gaussSeidel.o elimGauss.o linSys.o utils.o
 
 # Compilador
 CC     = gcc

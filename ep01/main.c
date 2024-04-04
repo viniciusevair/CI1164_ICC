@@ -1,32 +1,51 @@
 #include <stdio.h>
-#include <string.h>
 #include "linSys.h"
 #include "elimGauss.h"
 #include "gaussSeidel.h"
 #include "utils.h"
 
 int main(int argc, char *argv[]) {
-    int matrixSize;
-    double *b, *c;
     rtime_t tempo;
-    struct tMatrix *m, *n;
+    int matrixSize;
     scanf("%d", &matrixSize);
-    m = createMatrix(matrixSize);
+
+    struct tMatrix *m = createMatrix(matrixSize);
     readInput(m);
-    n = makeCopy(m);
-    //memcpy(n, m, sizeof(struct tMatrix)*m->size*m->size);
-    //memcpy(c, b, sizeof(double)*m->size);
 
-    printMatrix(m);
-    printf("-----------\n");
-    printMatrix(n);
+    //Eliminação Gaussiana clássica
+    struct tMatrix *n = makeCopy(m);
+    double *x = createArray(matrixSize);
+    double *r = createArray(matrixSize);
+    tempo = timestamp();
+    gaussianElim(n);
+    getSolution(n, x);
+    tempo = timestamp() - tempo;
+    getResidual(x, r, m);
 
-    //tempo = timestamp();
-    //gaussianElim(m, b);
-    //tempo = timestamp() - tempo;
+    printf("EG clássico:\n");
+    printf("%f ms\n", tempo);
+    printArray(x, matrixSize);
+    printArray(r, matrixSize);
+    printf("\n");
 
-    //printf("EG clássico:\n");
-    //printSolution(m, b, struct tMatrix *originalMatrix, double *c)
+    //Método iterativo de Gauss-Seidel clássico
+    int it;
+    tempo = timestamp();
+    it = gaussSeidel(m, x, 10e-4);
+    tempo = timestamp() - tempo;
+    getResidual(x, r, m);
+
+    printf("GS clássico [ %d iterações ]:\n", it);
+    printf("%f ms\n", tempo);
+    printArray(x, matrixSize);
+    printArray(r, matrixSize);
+
+    //Eliminação gaussiana tridiagonal
+    struct tTridMatrix *o = makeTridCopy(m);
+    tempo = timestamp();
+    gaussianElimTrid(o->d, o->a, o->c, o->b, x, o->size);
+    getSolution(n, x);
+    tempo = timestamp() - tempo;
 
     return 0;
 }

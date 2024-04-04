@@ -15,7 +15,7 @@ double getMaxDiff(double *a, double *b, int size){
 }
 
 /* Tolerância é 10^-4, iteração máxima 50. */
-int gaussSeidel(struct tMatrix *m, double *b, double *x, double tol) {
+int gaussSeidel(struct tMatrix *m, double *x, double tol) {
     double err = 1 + tol;
     double s;
     double *lastIteration = createArray(m->size);
@@ -29,7 +29,7 @@ int gaussSeidel(struct tMatrix *m, double *b, double *x, double tol) {
                 if(i != j)
                     s = s + m->data[i][j] * x[j];
             }
-            x[i] = (b[i] - s) / m->data[i][i];
+            x[i] = (m->b[i] - s) / m->data[i][i];
         }
 
         //calcula erro entre x e lastIteration
