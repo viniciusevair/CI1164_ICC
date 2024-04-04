@@ -50,8 +50,24 @@ void gaussianElimTrid(double *d, double *a, double *c, double *b,
         d[i+1] -= c[i] * multiplier;
         b[i+1] -= b[i] * multiplier;
     }
-
-    x[ n-1 ] = b[ n-1 ] / d[ n-1 ];
+    x[n-1] = b[n-1] / d[n-1];
     for (int i=n-2; i >= 0; --i)
-        x[ i ] = (b[ i ] - c[ i ] * x[ i+1 ]) / d[ i ];
+        x[i] = (b[i] - c[i] * x[i+1]) / d[i];
+}
+
+void getSolution(struct tMatrix *m, double *x) {
+    for(int i = m->size - 1; i >= 0; i--) {
+        x[i] = m->b[i];
+        for(int j = i + 1; j < m->size; j++) {
+            x[i] -= m->data[i][j] * x[j];
+        }
+        x[i] /= m->data[i][i];
+    }
+}
+
+void getTridSolution(struct tTridMatrix *m, double *x) {
+    x[m->size - 1] = m->b[m->size - 1] / m->d[m->size - 1];
+
+    for(int i = m->size - 2; i >= 0; i--)
+        x[i] = (m->b[i] - m->c[i] * x[i + 1]) / m->d[i];
 }

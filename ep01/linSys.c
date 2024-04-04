@@ -115,6 +115,7 @@ struct tTridMatrix* makeTridCopy(struct tMatrix *m) {
 
     for (i = 0; i < matrixTrid->size; i++) {
         matrixTrid->d[i] = m->data[i][i];
+        matrixTrid->b[i] = m->b[i];
         if (i < matrixTrid->size - 1)
             matrixTrid->c[i] = m->data[i][i + 1];
         if (i > 0)
@@ -141,23 +142,6 @@ void printArray(double *x, int size) {
     for(int i = 0; i < size - 1; i++)
         printf("%.12lf ", x[i]);
     printf("%.12lf\n", x[size - 1]);
-}
-
-void getSolution(struct tMatrix *m, double *x) {
-    for(int i = m->size - 1; i >= 0; i--) {
-        x[i] = m->b[i];
-        for(int j = i + 1; j < m->size; j++) {
-            x[i] -= m->data[i][j] * x[j];
-        }
-        x[i] /= m->data[i][i];
-    }
-}
-
-void getTridSolution(struct tTridMatrix *m, double *x) {
-    x[m->size - 1] = m->b[m->size - 1] / m->d[m->size - 1];
-
-    for(int i = m->size - 2; i >= 0; i--)
-        x[i] = (m->b[i] - m->c[i] * x[i + 1]) / m->d[i];
 }
 
 void getResidual(double *x, double *r, struct tMatrix *originalMatrix) {
