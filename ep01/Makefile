@@ -6,8 +6,8 @@ OBJS = main.o gaussSeidel.o elimGauss.o linSys.o utils.o
 CC     = gcc
 
 # Acrescentar onde apropriado as opções para incluir uso da biblioteca LIKWID
-CFLAGS = -O0 -g
-LFLAGS = -lm
+CFLAGS = -O0 -g -DLIKWID_PERFMON
+LFLAGS = -lm -llikwid
 
 LIKWID = /home/soft/likwid/
 LIKWID_FLAGS = -I$(LIKWID)/include
@@ -20,12 +20,12 @@ DISTDIR = `basename ${PWD}`
 .PHONY: all clean purge dist
 
 %.o: %.c %.h
-	$(CC) -c $(CFLAGS) -o $@ $<
+	$(CC) $(LIKWID_FLAGS) $(LIKWID_LIB) -c $(CFLAGS) -o $@ $<
 
 all: $(PROG)
 
 $(PROG): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LFLAGS)
+	$(CC) $(LIKWID_FLAGS) $(LIKWID_LIB) $(CFLAGS) -o $@ $^ $(LFLAGS)
 
 clean:
 	@echo "Limpando sujeira ..."
