@@ -1,4 +1,3 @@
-#include <likwid-marker.h>
 #include <stdio.h>
 #include <likwid.h>
 #include "linSys.h"
