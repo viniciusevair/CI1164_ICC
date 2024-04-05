@@ -1,42 +1,27 @@
-# PROGRAMA
-PROG = perfSL
-OBJS = main.o gaussSeidel.o elimGauss.o linSys.o utils.o
+CFLAGS = -Wall -g -O0
+LDFLAGS = -llikwid -lm
+PROGRAM_NAME = perfSL
 
-# Compilador
-CC     = gcc
+CC = gcc
+LKWDFLAGS = -DLIKWID_PERFMON -I${LIKWID_INCLUDE} -L${LIKWID_LIB}
 
-# Acrescentar onde apropriado as opções para incluir uso da biblioteca LIKWID
-CFLAGS = -O0 -g -DLIKWID_PERFMON
-LFLAGS = -lm -llikwid
+# arquivos-objeto
+OBJECTS = main.o elimGauss.o gaussSeidel.o linSys.o utils.o
 
-LIKWID = /home/soft/likwid/
-LIKWID_FLAGS = -I$(LIKWID)/include
-LIKWID_LIB = -L$(LIKWID)/lib
+all: $(PROGRAM_NAME)
 
-# Lista de arquivos para distribuição
-DISTFILES = *.c *.h LEIAME* Makefile
-DISTDIR = `basename ${PWD}`
+run:
+	./script.sh
 
-.PHONY: all clean purge dist
+$(PROGRAM_NAME): $(OBJECTS)
+	$(CC) $(LKWDFLAGS) -o $(PROGRAM_NAME) $(OBJECTS) $(LDFLAGS)
 
-%.o: %.c %.h
-	$(CC) $(LIKWID_FLAGS) $(LIKWID_LIB) -c $(CFLAGS) -o $@ $<
-
-all: $(PROG)
-
-$(PROG): $(OBJS)
-	$(CC) $(LIKWID_FLAGS) $(LIKWID_LIB) $(CFLAGS) -o $@ $^ $(LFLAGS)
+%.o: %.c
+	$(CC) $(LKWDFLAGS) -c $(CFLAGS) $< -o $@
 
 clean:
-	@echo "Limpando sujeira ..."
-	@rm -f *~ *.bak
+	rm -f $(OBJECTS)
 
-purge:  clean
-	@echo "Limpando tudo ..."
-	@rm -f $(PROG) $(OBJS) core a.out $(DISTDIR) $(DISTDIR).tar
+purge: clean
+	rm -f $(PROGRAM_NAME)
 
-dist: purge
-	@echo "Gerando arquivo de distribuição ($(DISTDIR).tar) ..."
-	@ln -s . $(DISTDIR)
-	@tar -cvf $(DISTDIR).tar $(addprefix ./$(DISTDIR)/, $(DISTFILES))
-	@rm -f $(DISTDIR)
