@@ -48,8 +48,15 @@ int main(int argc, char *argv[]) {
     printArray(r, matrixSize);
     printf("\n");
 
+    deleteArray(x);
+    x = NULL;
+    deleteArray(r);
+    r = NULL;
+
     //Eliminação gaussiana tridiagonal
     struct tTridMatrix *o = makeTridCopy(m);
+    x = createArray(matrixSize);
+    r = createArray(matrixSize);
     tempo = timestamp();
     gaussianElimTrid(o->d, o->a, o->c, o->b, x, o->size);
     getTridSolution(o, x);
@@ -57,6 +64,26 @@ int main(int argc, char *argv[]) {
     getResidual(x, r, m);
 
     printf("EG 3-diagonal:\n");
+    printf("%f ms\n", tempo);
+    printArray(x, matrixSize);
+    printArray(r, matrixSize);
+    printf("\n");
+
+    deleteArray(x);
+    x = NULL;
+    deleteArray(r);
+    r = NULL;
+
+    //Método iterativo de Gauss-Seidel tridiagonal 
+    struct tTridMatrix *p = makeTridCopy(m);
+    x = createArray(matrixSize);
+    r = createArray(matrixSize);
+    tempo = timestamp();
+    it = gaussSeidelTrid(p->d, p->a, p->c, p->b, x, p->size, 10e-4);
+    tempo = timestamp() - tempo;
+    getResidual(x, r, m);
+
+    printf("GS 3-diagonal [ %d iterações ]:\n", it);
     printf("%f ms\n", tempo);
     printArray(x, matrixSize);
     printArray(r, matrixSize);
