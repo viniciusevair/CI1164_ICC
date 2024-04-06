@@ -13,6 +13,9 @@ parse_output () {
         echo " " >> ${FILTERED_OUTPUT}
     }
 
+    if [ -f "${FILTERED_OUTPUT}" ]; then
+        rm -f "${FILTERED_OUTPUT}"
+    fi
     filter_results "EG clássico" "Region eg_classico"
     filter_results "GS clássico" "Region gs_classico"
     filter_results "EG 3-diagonal" "Region eg_trid"
@@ -26,6 +29,7 @@ if [ ! -d "outputs" ]; then
     mkdir "outputs"
 fi
 
+TEMP_FILE=$(mktemp -p .)
 # Itera por todos os arquivos dentro do diretório de entradas.
 # Cada arquivo contém um dos exemplos do arquivo sistemas.dat.
 for INPUT_FILE in inputs/input*; do
@@ -35,5 +39,8 @@ for INPUT_FILE in inputs/input*; do
     OUTPUT_FILE="outputs/output$ID"
 
     # Executa o programa utilizando o likwid.
-    likwid-perfctr -C 3 -g FLOPS_DP -m ./perfSL < "$INPUT_FILE" | parse_output - "$OUTPUT_FILE"
+    likwid-perfctr -C 3 -g FLOPS_DP -m ./perfSL < "$INPUT_FILE" > $TEMP_FILE
+    parse_output "$TEMP_FILE" "$OUTPUT_FILE"
 done
+
+rm $TEMP_FILE
