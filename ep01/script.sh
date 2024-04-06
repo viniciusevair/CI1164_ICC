@@ -9,7 +9,7 @@ parse_output () {
         LABEL="$2"
 
         cat ${PROG_OUTPUT} | grep "${PATTERN}" -A3 >> ${FILTERED_OUTPUT}
-        awk -v label="${LABEL}" '$0 ~ "^" label {region=$0; r=1} /DP MFLOP\/s/{if (r) { printf "%s\n%s\n", region, $0; r=0 }}' full_output.txt >> ${FILTERED_OUTPUT}
+        awk -v label="${LABEL}" '$0 ~ "^" label {region=$0; r=1} /DP MFLOP\/s/{if (r) { printf "%s\n%s\n", region, $0; r=0 }}' ${PROG_OUTPUT} >> ${FILTERED_OUTPUT}
         echo " " >> ${FILTERED_OUTPUT}
     }
 
@@ -35,5 +35,5 @@ for INPUT_FILE in inputs/input*; do
     OUTPUT_FILE="outputs/output$ID"
 
     # Executa o programa utilizando o likwid.
-    parse_output ${likwid-perfctr -C 3 -g FLOPS_DP -m ./perfSL < "$INPUT_FILE"} "$OUTPUT_FILE"
+    likwid-perfctr -C 3 -g FLOPS_DP -m ./perfSL < "$INPUT_FILE" | parse_output - "$OUTPUT_FILE"
 done
