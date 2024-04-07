@@ -1,3 +1,5 @@
+/* Autores: Luiz Henrique Murback Wiedmer GRR20221234, Vinicius Evair da Silva GRR20221251. */ 
+
 #ifndef __MATRIX_H
 #define __MATRIX_H
 

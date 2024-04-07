@@ -1,11 +1,10 @@
 #!/bin/bash
 
-##############################################
-# Script feito por Vinicius Evair da Silva e #
-#   Luiz Henrique Murback Wiedmer para a     #
-#  disciplina de Introdução à Computação     #
-#           Científica (CI1164)              #
-##############################################
+################################################################
+# Script feito por Luiz Henrique Murback Wiedmer GRR20221234 e #
+#   Vinicius Evair da Silva GRR20221251 para a disciplina de   #
+#         Introdução à Computação Científica (CI1164)          #
+################################################################
 #
 # Este script executa o programa 'perfSL' com diversos sistemas lineares como
 # entrada, e utiliza o likwid-perfctr para medir e filtrar as taxas de
