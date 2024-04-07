@@ -1,7 +1,11 @@
+/* Autores: Luiz Henrique Murback Wiedmer GRR22221234, Vinicius Evasir da Silva GRR20221251. */ 
+
 #include "linSys.h"
 #include <math.h>
 #include <string.h>
 
+
+/* Retorna a maior diferença entre os elementos de indice i de a e b. */
 double getMaxDiff(double *a, double *b, int size){
     double currentErr;
     double maxErr = 0.0;
@@ -15,6 +19,8 @@ double getMaxDiff(double *a, double *b, int size){
 }
 
 /* Tolerância é 10^-4, iteração máxima 50. */
+/* Soluciona o sistema linear presente em *m utilizando metodo de Gauss Seidel,
+ * e insere a respsota no vetor *x. */
 int gaussSeidel(struct tMatrix *m, double *x, double tol) {
     double err = 1 + tol;
     double s;
@@ -43,6 +49,11 @@ int gaussSeidel(struct tMatrix *m, double *x, double tol) {
     return it;
 }
 
+
+/* Tolerância é 10^-4, iteração máxima 50. */
+/* Soluciona o sistema linear com suas tres diagonais principais
+ * presentes em *d, *a, *c e o vetor solucao em *b utilizando uma 
+ * versao otimizada para sistemas tridiagonais e insere a resposta no vetor *x. */
 int gaussSeidelTrid(double *d, double *a, double *c, double *b,
                     double *x, unsigned int n, double tol) {
     double err = 1 + tol;

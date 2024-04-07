@@ -1,18 +1,20 @@
 #ifndef __MATRIX_H
 #define __MATRIX_H
 
+/* Representa um sistema linear. */
 struct tMatrix {
-    double **data;
-    double *b;
-    int size;
+    double **data; /* Representa a matriz de coeficientes. */
+    double *b; /* Representa o vetor de termos independentes. */
+    int size; /* Representa o tamanho da matriz. */
 };
 
+/* Representa um sistema linear tridiagonal. */
 struct tTridMatrix {
-    double *d;
-    double *a;
-    double *c;
-    double *b;
-    int size;
+    double *d; /* Representa a diagonal principal. */
+    double *a; /* Representa a diagonal inferior a diagonal principal. */
+    double *c; /* Representa a diagonal superior a diagonal principal. */
+    double *b; /* Representa o vetor de termos independentes. */
+    int size; /* Representa o tamanho da matriz. */
 };
 
 struct tMatrix* createMatrix(int size);

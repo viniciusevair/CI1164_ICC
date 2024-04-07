@@ -1,3 +1,5 @@
+/* Autores: Luiz Henrique Murback Wiedmer GRR22221234, Vinicius Evasir da Silva GRR20221251. */ 
+
 #include <stdio.h>
 #include <likwid.h>
 #include "linSys.h"

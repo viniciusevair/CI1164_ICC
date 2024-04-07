@@ -1,9 +1,14 @@
+/* Autores: Luiz Henrique Murback Wiedmer GRR22221234, Vinicius Evasir da Silva GRR20221251. */ 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "linSys.h"
 
+/* Aloca memoria para um struct tMatrix* e o retorna.
+ * No caso de erro na alocacao a funcao retorna NULL
+ * e notifica o usuario. */
 struct tMatrix* createMatrix(int size) {
     int i;
     struct tMatrix* m;
@@ -30,6 +35,9 @@ struct tMatrix* createMatrix(int size) {
     return m;
 }
 
+/* Aloca memoria para um struct tTridMatrix* e o retorna.
+ * No caso de erro na alocacao a funcao retorna NULL
+ * e notifica o usuario. */
 struct tTridMatrix* createTridMatrix(int size) {
     struct tTridMatrix* m;
 
@@ -59,6 +67,8 @@ struct tTridMatrix* createTridMatrix(int size) {
     return m;
 }
 
+/* Aloca memoria para um vetor de double de tamanho size e o retorna.
+ * No caso de erro na alocacao a funcao retorna NULL e notifica o usuario. */
 double* createArray(int size) {
     double* arr;
     if(! (arr = calloc(size, sizeof(double)))) {
@@ -69,11 +79,13 @@ double* createArray(int size) {
     return arr;
 }
 
+/* Libera a memoria apontada por *arr e aponta o ponteiro para NULL. */
 void deleteArray(double *arr) {
     free(arr);
     arr = NULL;
 }
 
+/* Libera a memoria apontada por *m e aponta o ponteiro para NULL. */
 void deleteMatrix(struct tMatrix* m) {
     int i;
 
@@ -87,6 +99,8 @@ void deleteMatrix(struct tMatrix* m) {
     m = NULL;
 }
 
+/* Le uma entrada inserida pelo usuario no formato de matriz
+ * e a insere em *matrix. */
 void readInput(struct tMatrix *matrix) {
     int i, j;
 
@@ -97,6 +111,7 @@ void readInput(struct tMatrix *matrix) {
     }
 }
 
+/* Cria uma copia da matriz *m e a retorna. */
 struct tMatrix* makeCopy(struct tMatrix *m) {
     struct tMatrix *copy = createMatrix(m->size);
 
@@ -109,6 +124,7 @@ struct tMatrix* makeCopy(struct tMatrix *m) {
     return copy;
 }
 
+/* Cria uma copia da matriz *m e a retorna. */
 struct tTridMatrix* makeTridCopy(struct tMatrix *m) {
     int i, j;
     struct tTridMatrix *matrixTrid = createTridMatrix(m->size);
@@ -138,12 +154,14 @@ void printMatrix(struct tMatrix* m) {
     }
 }
 
+/* Imprime o vetor *x. */
 void printArray(double *x, int size) {
     for(int i = 0; i < size - 1; i++)
         printf("%.12lf ", x[i]);
     printf("%.12lf\n", x[size - 1]);
 }
 
+/* Calcula o residuo e o insere no vetor *r. */
 void getResidual(double *x, double *r, struct tMatrix *originalMatrix) {
     for(int i = 0; i < originalMatrix->size; i++) {
         r[i] = (-1) * originalMatrix->b[i];

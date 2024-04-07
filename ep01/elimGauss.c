@@ -1,13 +1,17 @@
+/* Autores: Luiz Henrique Murback Wiedmer GRR22221234, Vinicius Evasir da Silva GRR20221251. */ 
+
 #include <math.h>
 #include <stdio.h>
 #include "linSys.h"
 
+/* Troca as linhas de indice a e b na matriz *m. */
 void swapLines(struct tMatrix* m, int a, int b) {
     double* auxPointer = m->data[a];
     m->data[a] = m->data[b];
     m->data[b] = auxPointer;
 }
 
+/* Retorna o maior valor da coluna de indice column na matriz *m. */
 int getMaxColumnValue(struct tMatrix* m, int column) {
     int candidate = column;
 
@@ -18,6 +22,7 @@ int getMaxColumnValue(struct tMatrix* m, int column) {
     return candidate;
 }
 
+/* Realiza o pivoteamento na coluna i da matriz *m. */
 void pivoting(struct tMatrix* m, int i) {
     int pivotCandidate = getMaxColumnValue(m, i);
 
@@ -25,6 +30,9 @@ void pivoting(struct tMatrix* m, int i) {
         swapLines(m, i, pivotCandidate);
 }
 
+/* Realizas as mudancas necessarias na matriz *m utilizando o metodo 
+ * da eliminacao de Gauss para que o sistema linear que ela representa
+ * possa ser resolvido pela funcao getSolution. */
 void gaussianElim(struct tMatrix* m) {
     for(int i = 0; i < m->size; i++) {
         pivoting(m, i);
@@ -41,6 +49,10 @@ void gaussianElim(struct tMatrix* m) {
     }
 }
 
+/* Realizas as mudancas necessarias nos vetores *d, *a, *b e *c
+ * utilizando o metodo da eliminacao de Gauss para matrizes tridiagonais
+ * para que o sistema linear que os vetores representam possa ser
+ * resolvido pela funcao getSolution. */
 void gaussianElimTrid(double *d, double *a, double *c, double *b,
                       double *x, unsigned int n) {
     for(int i = 0; i < n - 1; i++) {
@@ -55,6 +67,9 @@ void gaussianElimTrid(double *d, double *a, double *c, double *b,
         x[i] = (b[i] - c[i] * x[i+1]) / d[i];
 }
 
+/* Insere a solucao do sistema linear representado por *m no vetor *x. */
+/* A matriz precisa ter sido processada pelo funcao gaussianElim para
+ * que o sistema possa ser resolvido corretamente. */
 void getSolution(struct tMatrix *m, double *x) {
     for(int i = m->size - 1; i >= 0; i--) {
         x[i] = m->b[i];
@@ -65,6 +80,9 @@ void getSolution(struct tMatrix *m, double *x) {
     }
 }
 
+/* Insere a solucao do sistema linear representado por *m no vetor *x. */
+/* A matriz precisa ter sido processada pelo funcao gaussianElimTrid para
+ * que o sistema possa ser resolvido corretamente. */
 void getTridSolution(struct tTridMatrix *m, double *x) {
     x[m->size - 1] = m->b[m->size - 1] / m->d[m->size - 1];
 

@@ -1,0 +1,9 @@
+Implementação de métodos de resolução de sistemas lineares
+
+Alunos - Luiz Henrique Murback Wiedmer e Vinicius Evair da Silva
+
+Limitações do programa - Caso a entrada inserida não esteja de acordo com o esperado
+o resultado é imprevisível. Além disso, no caso das funções para sistemas tridiagonais,
+se a entrada inserida não for uma matriz tridiagonal o resultado é imprevisível. E por fim,
+nos método de Gauss Seidel clássico e tridiagonal, dependendo da matriz o resultado será 
+diferente do esperado, por conta do limite de 50 iterações.  
