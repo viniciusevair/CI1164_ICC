@@ -1,4 +1,4 @@
-/* Autores: Luiz Henrique Murback Wiedmer GRR22221234, Vinicius Evasir da Silva GRR20221251. */ 
+/* Autores: Luiz Henrique Murback Wiedmer GRR20221234, Vinicius Evair da Silva GRR20221251. */ 
 
 #include <math.h>
 #include <stdio.h>
