@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>    /* exit, malloc, calloc, etc. */
 #include <string.h>
-#include <getopt.h>    /* getopt */
 #include <time.h>
+#include <sys/time.h>
+#include <getopt.h>    /* getopt */
 
 #include "matriz.h"
 
@@ -17,6 +18,16 @@ static void usage(char *progname)
   exit(1);
 }
 
+typedef double rtime_t;
+
+
+// Função 
+rtime_t timestamp (void)
+{
+  struct timespec tp;
+  clock_gettime(CLOCK_MONOTONIC_RAW, &tp);
+  return ( (rtime_t) tp.tv_sec*1.0e3 + (rtime_t) tp.tv_nsec*1.0e-6 );
+}
 
 
 /**
@@ -30,8 +41,8 @@ int main (int argc, char *argv[])
 {
   int n=DEF_SIZE;
   
-  MatRow mRow_1, mRow_2, resMat;
-  Vetor vet, res;
+  MatRow mRow_1, mRow_2, resMat, resMatUJB;
+  Vetor vet, res, resUJB;
   
   /* =============== TRATAMENTO DE LINHA DE COMANDO =============== */
 
@@ -44,8 +55,10 @@ int main (int argc, char *argv[])
  
   srandom(20232);
       
-  res = geraVetor (n, 0); // (real_t *) malloc (n*sizeof(real_t));
+  res = geraVetor (n, 1); // (real_t *) malloc (n*sizeof(real_t));
   resMat = geraMatRow(n, n, 1);
+  resUJB = geraVetor (n, 1); // (real_t *) malloc (n*sizeof(real_t));
+  resMatUJB = geraMatRow(n, n, 1);
     
   mRow_1 = geraMatRow (n, n, 0);
   mRow_2 = geraMatRow (n, n, 0);
@@ -69,10 +82,32 @@ int main (int argc, char *argv[])
     printf ("=================================\n\n");
 #endif /* _DEBUG_ */
 
+
+  rtime_t tempo;
+  tempo = timestamp();
   multMatVet (mRow_1, vet, n, n, res);
-    
+  tempo = timestamp() - tempo;
+  printf("Tempo de execução mulMatVet: %f\n", tempo);
+  prnVetor (res, n);
+
+  tempo = timestamp();
+  multMatVetUJB (mRow_1, vet, n, n, resUJB);
+  tempo = timestamp() - tempo;
+  printf("Tempo de execução mulMatVetUJB: %f\n", tempo);
+  prnVetor (resUJB, n);
+
+  tempo = timestamp();
+  multMatMatUJB(mRow_1, mRow_2, n, resMatUJB);
+  tempo = timestamp() - tempo;
+  printf("Tempo de execução mulMatMatUJB: %f\n", tempo);
+  prnMat (resMatUJB, n, n);
+
+  tempo = timestamp();
   multMatMat (mRow_1, mRow_2, n, resMat);
-    
+  tempo = timestamp() - tempo;
+  printf("Tempo de execução mulMatMat: %f\n", tempo);
+  prnMat (resMat, n, n);
+
 #ifdef _DEBUG_
     prnVetor (res, n);
     prnMat (resMat, n, n);
@@ -83,7 +118,6 @@ int main (int argc, char *argv[])
   liberaVetor ((void*) resMat);
   liberaVetor ((void*) vet);
   liberaVetor ((void*) res);
-
   return 0;
 }
 

@@ -5,6 +5,20 @@
 
 #include "matriz.h"
 
+#define BK_FACTOR 4
+#define UR_FACTOR 4
+
+/*  Retorna tempo em milisegundos desde EPOCH
+
+    Forma de uso:
+ 
+    rtime_t tempo;
+    tempo = timestamp();
+    <trecho de programa do qual se deseja medir tempo>
+    tempo = timestamp() - tempo;
+*/
+
+
 /**
  * Função que gera valores para para ser usado em uma matriz
  * @param i,j coordenadas do elemento a ser calculado (0<=i,j<n)
@@ -110,12 +124,30 @@ void liberaVetor (void *vet)
 
 void multMatVet (MatRow mat, Vetor v, int m, int n, Vetor res)
 {
-    
   /* Efetua a multiplicação */
+  for (int i=0; i < m; ++i)
+    for (int j=0; j < n; ++j)
+      res[i] += mat[n * i + j] * v[j];
+}
+
+void multMatVetUJB (MatRow mat, Vetor v, int m, int n, Vetor res)
+{
+  /* Efetua a multiplicação */
+
   if (res) {
-    for (int i=0; i < m; ++i)
-      for (int j=0; j < n; ++j)
-        res[i] += mat[n*i + j] * v[j];
+    for (int ii = 0; ii < m / BK_FACTOR; ++ii) {
+      int istart = ii * BK_FACTOR; int iend = istart + BK_FACTOR;
+      for (int jj = 0; jj < n / BK_FACTOR; ++jj) {
+        int jstart = jj * BK_FACTOR; int jend = jstart + BK_FACTOR;
+        for (int i=istart; i < iend; i++)
+          for (int j=jstart; j < jend; j += UR_FACTOR) {
+            res[i] += mat[n * i + j] * v[j]
+                    + mat[n * i + j + 1] * v[j + 1]
+                    + mat[n * i + j + 2] * v[j + 2]
+                    + mat[n * i + j + 3] * v[j + 3];
+          }
+      }
+    }
   }
 }
 
@@ -132,12 +164,31 @@ void multMatVet (MatRow mat, Vetor v, int m, int n, Vetor res)
 
 void multMatMat (MatRow A, MatRow B, int n, MatRow C)
 {
-
   /* Efetua a multiplicação */
   for (int i=0; i < n; ++i)
     for (int j=0; j < n; ++j)
       for (int k=0; k < n; ++k)
-	C[i*n+j] += A[i*n+k] * B[k*n+j];
+        C[i * n + j] += A[i * n + k] * B[k * n + j];
+}
+
+void multMatMatUJB (MatRow A, MatRow B, int n, MatRow C) {
+    for (int ii=0; ii<n/BK_FACTOR; ++ii) {
+        int istart=ii*BK_FACTOR; int iend=istart+BK_FACTOR;
+        for (int jj=0; jj<n/BK_FACTOR; ++jj) {
+            int jstart=jj*BK_FACTOR; int jend=jstart+BK_FACTOR;
+            for (int kk=0; kk<n/BK_FACTOR; ++kk) {
+                int kstart=kk*BK_FACTOR; int kend=kstart+BK_FACTOR;
+                for (int i=istart; i < iend; ++i)
+                    for (int j=jstart; j < jend; j += UR_FACTOR)
+                        for (int k=kstart; k < kend; ++k) {
+                            C[i * n + j] += A[i * n + k] * B[k * n + j];
+                            C[i * n + (j + 1)] += A[i * n + k] * B[k * n + (j + 1)];
+                            C[i * n + (j + 2)] += A[i * n + k] * B[k * n + (j + 2)];
+                            C[i * n + (j + 3)] += A[i * n + k] * B[k * n + (j + 3)];
+                        }
+            }
+        }
+    }
 }
 
 
