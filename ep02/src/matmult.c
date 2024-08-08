@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>    /* exit, malloc, calloc, etc. */
-#include <string.h>
-#include <time.h>
 #include <sys/time.h>
 #include <getopt.h>    /* getopt */
 
 #include "matriz.h"
+#include "utils.h"
 
 /**
  * Exibe mensagem de erro indicando forma de uso do programa e termina
@@ -17,18 +16,6 @@ static void usage(char *progname)
   fprintf(stderr, "Forma de uso: %s [ <ordem> ] \n", progname);
   exit(1);
 }
-
-typedef double rtime_t;
-
-
-// Função 
-rtime_t timestamp (void)
-{
-  struct timespec tp;
-  clock_gettime(CLOCK_MONOTONIC_RAW, &tp);
-  return ( (rtime_t) tp.tv_sec*1.0e3 + (rtime_t) tp.tv_nsec*1.0e-6 );
-}
-
 
 /**
  * Programa principal
@@ -88,25 +75,25 @@ int main (int argc, char *argv[])
   multMatVet (mRow_1, vet, n, n, res);
   tempo = timestamp() - tempo;
   printf("Tempo de execução mulMatVet: %f\n", tempo);
-  prnVetor (res, n);
+  //prnVetor (res, n);
 
   tempo = timestamp();
   multMatVetUJB (mRow_1, vet, n, n, resUJB);
   tempo = timestamp() - tempo;
   printf("Tempo de execução mulMatVetUJB: %f\n", tempo);
-  prnVetor (resUJB, n);
+  //prnVetor (resUJB, n);
 
   tempo = timestamp();
   multMatMatUJB(mRow_1, mRow_2, n, resMatUJB);
   tempo = timestamp() - tempo;
   printf("Tempo de execução mulMatMatUJB: %f\n", tempo);
-  prnMat (resMatUJB, n, n);
+  //prnMat (resMatUJB, n, n);
 
   tempo = timestamp();
   multMatMat (mRow_1, mRow_2, n, resMat);
   tempo = timestamp() - tempo;
   printf("Tempo de execução mulMatMat: %f\n", tempo);
-  prnMat (resMat, n, n);
+  //prnMat (resMat, n, n);
 
 #ifdef _DEBUG_
     prnVetor (res, n);

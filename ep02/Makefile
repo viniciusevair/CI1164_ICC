@@ -1,24 +1,30 @@
-CFLAGS = -Wall -g -O3 -mavx2 -march=native
-LDFLAGS = -llikwid -lm
-PROGRAM_NAME = matmult
-
 CC = gcc
-LKWDFLAGS = -DLIKWID_PERFMON -I${LIKWID_INCLUDE} -L${LIKWID_LIB}
+PROGRAM_NAME = matmult
+CFLAGS = -Wall -g -O3 -mavx2 -march=native
+LDFLAGS = -lm
+#LDFLAGS = -llikwid -lm
+#LKWDFLAGS = -DLIKWID_PERFMON -I${LIKWID_INCLUDE} -L${LIKWID_LIB}
 
-# arquivos-objeto
-OBJECTS = matriz.o matmult.o
+SOURCE_DIR = src
+OBJECTS_DIR = build
+SOURCES := $(shell find $(SOURCE_DIR) -name '*.c')
+OBJECTS := $(patsubst $(SOURCE_DIR)/%.c,$(OBJECTS_DIR)/%.o,$(SOURCES))
 
 all: $(PROGRAM_NAME)
 
-$(PROGRAM_NAME): $(OBJECTS)
-	$(CC) -o $(PROGRAM_NAME) $(OBJECTS) -lm
+run: all
+	./script.sh
 
-%.o: %.c
+$(PROGRAM_NAME): $(OBJECTS)
+	$(CC) $(LDFLAGS) -o $(PROGRAM_NAME) $(OBJECTS)
+
+# Ensure that the subdirectory for the object file exists before compiling
+$(OBJECTS_DIR)/%.o: $(SOURCE_DIR)/%.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJECTS)
+	rm -rf $(OBJECTS_DIR)
 
 purge: clean
 	rm -f $(PROGRAM_NAME)
-
