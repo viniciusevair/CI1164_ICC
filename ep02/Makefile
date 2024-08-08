@@ -18,7 +18,6 @@ run: all
 $(PROGRAM_NAME): $(OBJECTS)
 	$(CC) $(LDFLAGS) -o $(PROGRAM_NAME) $(OBJECTS)
 
-# Ensure that the subdirectory for the object file exists before compiling
 $(OBJECTS_DIR)/%.o: $(SOURCE_DIR)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
