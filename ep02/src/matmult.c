@@ -2,6 +2,7 @@
 #include <stdlib.h>    /* exit, malloc, calloc, etc. */
 #include <sys/time.h>
 #include <getopt.h>    /* getopt */
+#include <likwid.h>
 
 #include "matriz.h"
 #include "utils.h"
@@ -30,6 +31,8 @@ int main (int argc, char *argv[])
   
   MatRow mRow_1, mRow_2, resMat, resMatUJB;
   Vetor vet, res, resUJB;
+
+  LIKWID_MARKER_INIT;
   
   /* =============== TRATAMENTO DE LINHA DE COMANDO =============== */
 
@@ -69,31 +72,38 @@ int main (int argc, char *argv[])
     printf ("=================================\n\n");
 #endif /* _DEBUG_ */
 
-
+  LIKWID_MARKER_START("MultMatVet");
   rtime_t tempo;
   tempo = timestamp();
   multMatVet (mRow_1, vet, n, n, res);
   tempo = timestamp() - tempo;
-  printf("Tempo de execução mulMatVet: %f\n", tempo);
+  printf("%f\n", tempo);
+  LIKWID_MARKER_STOP("MultMatVet");
   //prnVetor (res, n);
 
+  LIKWID_MARKER_START("MultMatVetUJB");
   tempo = timestamp();
   multMatVetUJB (mRow_1, vet, n, n, resUJB);
   tempo = timestamp() - tempo;
-  printf("Tempo de execução mulMatVetUJB: %f\n", tempo);
+  printf("%f\n", tempo);
+  LIKWID_MARKER_STOP("MultMatVetUJB");
   //prnVetor (resUJB, n);
 
-  tempo = timestamp();
-  multMatMatUJB(mRow_1, mRow_2, n, resMatUJB);
-  tempo = timestamp() - tempo;
-  printf("Tempo de execução mulMatMatUJB: %f\n", tempo);
-  //prnMat (resMatUJB, n, n);
-
+  LIKWID_MARKER_START("MultMatMat");
   tempo = timestamp();
   multMatMat (mRow_1, mRow_2, n, resMat);
   tempo = timestamp() - tempo;
-  printf("Tempo de execução mulMatMat: %f\n", tempo);
+  printf("%f\n", tempo);
+  LIKWID_MARKER_STOP("MultMatMat");
   //prnMat (resMat, n, n);
+
+  LIKWID_MARKER_START("MultMatMatUJB");
+  tempo = timestamp();
+  multMatMatUJB(mRow_1, mRow_2, n, resMatUJB);
+  tempo = timestamp() - tempo;
+  printf("%f\n", tempo);
+  LIKWID_MARKER_STOP("MultMatMatUJB");
+  //prnMat (resMatUJB, n, n);
 
 #ifdef _DEBUG_
     prnVetor (res, n);
@@ -105,6 +115,8 @@ int main (int argc, char *argv[])
   liberaVetor ((void*) resMat);
   liberaVetor ((void*) vet);
   liberaVetor ((void*) res);
+
+  LIKWID_MARKER_CLOSE;
   return 0;
 }
 
