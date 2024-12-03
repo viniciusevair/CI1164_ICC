@@ -1,0 +1,115 @@
+EP-02:  Otimização de Código Serial
+
+Alunos - Luiz Henrique Murback Wiedmer GRR20221234 e Vinicius Evair da Silva
+GRR20221251
+
+Limitações do programa - A execução das funções começa a ficar extremamente
+lenta a partir de n = 6000 para a multiplicação de matrizes, portanto o limite
+de tamanho para execução é n = 5000. O script que coleta os dados de vários
+tamanhos está com os tamanhos 6000 e 10000 comentados. Com n até 5000, a
+execução ainda assim leva um tempo considerável dada a necessidade de multiplas
+execuções.
+
+Como executar - O arquivo main_script.sh é um script que invoca os demais
+scripts necessários para a execução do programa. O comando make all executa este
+script.
+
+O main_script.sh invocará o script que executa o programa para diversos tamanhos
+até 5000, podendo este tamanho limite ser ajustado no arquivo getdata.sh. Em
+seguida, invocará o script que filtra a saida do getdata.sh em diversos arquivos
+.dat a serem usados pelo gnuplot.
+
+Por fim, o main_script.sh invoca o script que gera os gráficos em formato png.
+Todos os arquivos estarão avulsos no diretório principal e podem ser removidos
+com make purge (executa "rm -rf matmult *.o *.png *.dat results").
+
+Para otimizar o código, foi feito Unroll & Jam e também Blocking em ambas as
+funções. Os fatores que trouxeram melhor desempenho para a execução do programa
+foi 4 para o unroll e 2048 para a blocagem.
+
+Para a execução dos testes, foi utilizada a máquina h41, com a seguinte
+arquitetura:
+
+--------------------------------------------------------------------------------
+CPU name:       Intel(R) Core(TM) i5-7500 CPU @ 3.40GHz
+CPU type:       Intel Coffeelake processor
+CPU stepping:   9
+********************************************************************************
+Hardware Thread Topology
+********************************************************************************
+Sockets:                1
+Cores per socket:       4
+Threads per core:       1
+--------------------------------------------------------------------------------
+HWThread        Thread          Core            Socket          Available
+0               0               0               0               *
+1               0               1               0               *
+2               0               2               0               *
+3               0               3               0               *
+--------------------------------------------------------------------------------
+Socket 0:               ( 0 1 2 3 )
+--------------------------------------------------------------------------------
+********************************************************************************
+Cache Topology
+********************************************************************************
+Level:                  1
+Size:                   32 kB
+Type:                   Data cache
+Associativity:          8
+Number of sets:         64
+Cache line size:        64
+Cache type:             Non Inclusive
+Shared by threads:      1
+Cache groups:           ( 0 ) ( 1 ) ( 2 ) ( 3 )
+--------------------------------------------------------------------------------
+Level:                  2
+Size:                   256 kB
+Type:                   Unified cache
+Associativity:          4
+Number of sets:         1024
+Cache line size:        64
+Cache type:             Non Inclusive
+Shared by threads:      1
+Cache groups:           ( 0 ) ( 1 ) ( 2 ) ( 3 )
+--------------------------------------------------------------------------------
+Level:                  3
+Size:                   6 MB
+Type:                   Unified cache
+Associativity:          12
+Number of sets:         8192
+Cache line size:        64
+Cache type:             Inclusive
+Shared by threads:      4
+Cache groups:           ( 0 1 2 3 )
+--------------------------------------------------------------------------------
+********************************************************************************
+NUMA Topology
+********************************************************************************
+NUMA domains:           1
+--------------------------------------------------------------------------------
+Domain:                 0
+Processors:             ( 0 1 2 3 )
+Distances:              10
+Free memory:            5393.36 MB
+Total memory:           7825.94 MB
+--------------------------------------------------------------------------------
+
+
+********************************************************************************
+Graphical Topology
+********************************************************************************
+Socket 0:
++---------------------------------------------+
+| +--------+ +--------+ +--------+ +--------+ |
+| |    0   | |    1   | |    2   | |    3   | |
+| +--------+ +--------+ +--------+ +--------+ |
+| +--------+ +--------+ +--------+ +--------+ |
+| |  32 kB | |  32 kB | |  32 kB | |  32 kB | |
+| +--------+ +--------+ +--------+ +--------+ |
+| +--------+ +--------+ +--------+ +--------+ |
+| | 256 kB | | 256 kB | | 256 kB | | 256 kB | |
+| +--------+ +--------+ +--------+ +--------+ |
+| +-----------------------------------------+ |
+| |                   6 MB                  | |
+| +-----------------------------------------+ |
++---------------------------------------------+
